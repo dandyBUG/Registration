@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 关键 viewport，确保手机端正常显示 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>来宾信息登记</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+        body { background-color: #f7f8fa; color: #333; line-height: 1.6; padding: 20px; }
+        .container { max-width: 500px; margin: 0 auto; background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08); }
+        h1 { text-align: center; margin-bottom: 10px; color: #2c3e50; font-size: 24px; }
+        .subtitle { text-align: center; color: #7f8c8d; margin-bottom: 30px; font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: bold; color: #555; }
+        input, select { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; transition: border 0.3s; }
+        input:focus, select:focus { border-color: #3498db; outline: none; }
+        .submit-btn { width: 100%; padding: 16px; background: linear-gradient(135deg, #3498db, #2ecc71); color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer; transition: opacity 0.3s; }
+        .submit-btn:hover { opacity: 0.9; }
+        .loading { display: none; text-align: center; margin-top: 15px; color: #3498db; }
+        .footer { text-align: center; margin-top: 30px; color: #95a5a6; font-size: 12px; }
+        /* 手机端额外优化 */
+        @media (max-width: 480px) {
+            body { padding: 15px; }
+            .container { padding: 25px 20px; border-radius: 12px; }
+            h1 { font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>来宾信息登记</h1>
+        <p class="subtitle">请填写以下信息完成登记</p>
+
+        <!-- 表单区域 -->
+        <!-- 注意：需要将 action 替换为你自己的金数据表单URL -->
+        <form id="guestForm" action="https://jinshuju.net/f/你的表单唯一标识码" method="POST">
+            <div class="form-group">
+                <label for="field_1">姓名 *</label>
+                <input type="text" id="field_1" name="field_1" required placeholder="请输入您的姓名">
+            </div>
+            <div class="form-group">
+                <label for="field_2">手机号 *</label>
+                <input type="tel" id="field_2" name="field_2" required placeholder="请输入您的手机号">
+            </div>
+            <div class="form-group">
+                <label for="field_3">公司/单位</label>
+                <input type="text" id="field_3" name="field_3" placeholder="请输入公司名称">
+            </div>
+            <div class="form-group">
+                <label for="field_4">职位</label>
+                <select id="field_4" name="field_4">
+                    <option value="">请选择职位</option>
+                    <option value="高层管理">高层管理</option>
+                    <option value="中层管理">中层管理</option>
+                    <option value="普通员工">普通员工</option>
+                    <option value="其他">其他</option>
+                </select>
+            </div>
+            <!-- 金数据需要的隐藏字段，用于设置跳转 -->
+            <input type="hidden" name="redirect_to" value="https://你的用户名.github.io/你的仓库名/guide.html">
+            <!-- 如果需要，还可以传递一个成功消息参数 -->
+            <input type="hidden" name="thankyou_message" value="登记成功，即将跳转至会议指南...">
+
+            <button type="submit" class="submit-btn">提交信息</button>
+        </form>
+        <div id="loading" class="loading">提交中，请稍候...</div>
+    </div>
+    <p class="footer">提交后页面将自动跳转至会议须知</p>
+
+    <script>
+        // 可选：在表单提交时显示加载状态，提升体验
+        document.getElementById('guestForm').addEventListener('submit', function() {
+            document.getElementById('loading').style.display = 'block';
+        });
+
+        // 方案B备选：如果不想依赖金数据跳转，也可以用纯前端跳转（需自行处理数据）
+        // 但这需要你有一个能接收表单的服务器。此处为金数据方案，故不展开。
+    </script>
+</body>
+</html>
