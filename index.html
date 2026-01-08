@@ -42,29 +42,44 @@
 		</iframe>
     <script>
 		// 目标跳转地址
-		const redirectUrl = 'https://dandyBUG.github.io/Registration/guide.html';
+			const redirectUrl = 'https://dandyBUG.github.io/Registration/guide.html';
 
-		// 监听消息事件
-		window.addEventListener('message', function (event) {
-			// 重要：验证消息来源是否来自金数据域名，确保安全
-			if (event.origin.indexOf('jsjform.com') > -1) {
-				// 解析接收到的消息数据
+			// 获取 iframe 元素
+			const formIframe = document.getElementById('jinshujuIframe');
+
+			// 在 iframe 加载完成后，向其内部注入一个点击监听器
+			formIframe.onload = function() {
 				try {
-					var data = JSON.parse(event.data);
+					// 获取iframe内部的document
+					const iframeDoc = formIframe.contentDocument || formIframe.contentWindow.document;
+					// 寻找提交按钮 (金数据按钮通常包含 'submit-button' 类，这是一个通用选择器，可能需要调整)
+					const submitBtn = iframeDoc.querySelector('button[type="submit"], .submit-button, [class*="submit"]');
+					
+					if (submitBtn) {
+						// 为提交按钮添加点击事件监听
+						submitBtn.addEventListener('click', function() {
+							console.log('检测到表单提交点击，将在3秒后跳转...');
+							// 设置一个3秒的延时，足够表单完成提交处理
+							setTimeout(function() {
+								window.location.href = redirectUrl;
+							}, 3000); // 3000毫秒 = 3秒
+						});
+					} else {
+						// 如果没找到特定按钮，使用备用方案：监听iframe内所有点击，判断是否为提交
+						console.warn('未找到精确提交按钮，启用备用监听模式。');
+						iframeDoc.body.addEventListener('click', function(e) {
+							if (e.target.type === 'submit' || e.target.innerText.includes('提交')) {
+								setTimeout(() => window.location.href = redirectUrl, 3000);
+							}
+						});
+					}
 				} catch (e) {
-					return; // 如果不是JSON数据，则忽略
+					// 如果跨域安全策略阻止访问iframe内容，则直接启用一个全局的延时跳转作为最终保障
+					console.error('无法访问iframe内容（跨域限制），启用最终保障方案。');
+					// 你也可以直接设置一个全局的、更长的延时，例如表单加载后10秒跳转（备用）
+					// setTimeout(() => window.location.href = redirectUrl, 10000);
 				}
-				
-				// 判断是否为提交成功事件（这里监听 iframe 高度变化的消息，通常提交后高度会变）
-				// 你也可以根据金数据可能返回的其他特定消息进行判断
-				if (data && data.type === 'resizeHeight') {
-					// 为了更精确，可以添加一个简单的延时，确保是提交后的页面变化
-					setTimeout(function() {
-						window.location.href = redirectUrl;
-					}, 800); // 延迟800毫秒后跳转，这个时间可以根据表单响应速度调整
-				}
-			}
-		});
+			};
 		</script>
 	
 </body>
