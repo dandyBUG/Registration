@@ -31,51 +31,41 @@
     <div class="container">
         <h1>来宾信息登记</h1>
         <p class="subtitle">请填写以下信息完成登记</p>
-
-        <!-- 表单区域 -->
-        <!-- 注意：需要将 action 替换为你自己的金数据表单URL -->
-        <form id="guestForm" action="https://jinshuju.net/f/GukOzd" method="POST">
-            <div class="form-group">
-                <label for="field_1">姓名 *</label>
-                <input type="text" id="field_1" name="field_1" required placeholder="请输入您的姓名">
-            </div>
-            <div class="form-group">
-                <label for="field_2">手机号 *</label>
-                <input type="tel" id="field_2" name="field_2" required placeholder="请输入您的手机号">
-            </div>
-            <div class="form-group">
-                <label for="field_3">公司/单位</label>
-                <input type="text" id="field_3" name="field_3" placeholder="请输入公司名称">
-            </div>
-            <div class="form-group">
-                <label for="field_4">职位</label>
-                <select id="field_4" name="field_4">
-                    <option value="">请选择职位</option>
-                    <option value="高层管理">高层管理</option>
-                    <option value="中层管理">中层管理</option>
-                    <option value="普通员工">普通员工</option>
-                    <option value="其他">其他</option>
-                </select>
-            </div>
-            <!-- 金数据需要的隐藏字段，用于设置跳转 -->
-            <input type="hidden" name="redirect_to" value="https://dandyBUG.github.io/Registration/guide.html">
-            <!-- 如果需要，还可以传递一个成功消息参数 -->
-            <input type="hidden" name="thankyou_message" value="登记成功，即将跳转至会议指南...">
-
-            <button type="submit" class="submit-btn">提交信息</button>
-        </form>
-        <div id="loading" class="loading">提交中，请稍候...</div>
-    </div>
-    <p class="footer">提交后页面将自动跳转至会议须知</p>
-
+		
+       <iframe 
+			id="jinshujuIframe" 
+			src="https://k2wmoatl.jsjform.com/f/GukOzd?background=white&banner=show&embedded=true" 
+			width="100%" 
+			frameborder="0" 
+			allowtransparency="true" 
+			style="min-height: 600px; border: none;">
+		</iframe>
     <script>
-        // 可选：在表单提交时显示加载状态，提升体验
-        document.getElementById('guestForm').addEventListener('submit', function() {
-            document.getElementById('loading').style.display = 'block';
-        });
+		// 目标跳转地址
+		const redirectUrl = 'https://dandyBUG.github.io/Registration/guide.html';
 
-        // 方案B备选：如果不想依赖金数据跳转，也可以用纯前端跳转（需自行处理数据）
-        // 但这需要你有一个能接收表单的服务器。此处为金数据方案，故不展开。
-    </script>
+		// 监听消息事件
+		window.addEventListener('message', function (event) {
+			// 重要：验证消息来源是否来自金数据域名，确保安全
+			if (event.origin.indexOf('jsjform.com') > -1) {
+				// 解析接收到的消息数据
+				try {
+					var data = JSON.parse(event.data);
+				} catch (e) {
+					return; // 如果不是JSON数据，则忽略
+				}
+				
+				// 判断是否为提交成功事件（这里监听 iframe 高度变化的消息，通常提交后高度会变）
+				// 你也可以根据金数据可能返回的其他特定消息进行判断
+				if (data && data.type === 'resizeHeight') {
+					// 为了更精确，可以添加一个简单的延时，确保是提交后的页面变化
+					setTimeout(function() {
+						window.location.href = redirectUrl;
+					}, 800); // 延迟800毫秒后跳转，这个时间可以根据表单响应速度调整
+				}
+			}
+		});
+		</script>
+	
 </body>
 </html>
